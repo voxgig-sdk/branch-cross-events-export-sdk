@@ -1,0 +1,108 @@
+# Entity: status
+
+main: kit: entity: status: {
+
+  alias: field: {}
+
+  fields: [
+    {
+      name: "code"
+      req: false
+      short: "Response code"
+      type: "`$INTEGER`"
+    }
+    {
+      name: "id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "job_id"
+      req: false
+      short: "The unique ID of the request."
+      type: "`$STRING`"
+    }
+    {
+      name: "status_url"
+      req: false
+      short: "The URL of the export request."
+      type: "`$STRING`"
+    }
+  ]
+
+  id: {
+    field: "id"
+    name: "id"
+  }
+
+  name: "status"
+  op: {
+    load: {
+      name: "load"
+      points: [
+        {
+          args: {
+            params: [
+              {
+                kind: "param"
+                name: "id"
+                orig: "job_id"
+                reqd: true
+                type: "`$STRING`"
+              }
+            ]
+            query: [
+              {
+                kind: "query"
+                name: "app_id"
+                orig: "app_id"
+                reqd: true
+                type: "`$STRING`"
+              }
+            ]
+          }
+          contract: {
+            id: "GET /branch_aggregate/async/status/{job_id}"
+            json: "{\"operationId\":\"retrieveExportDownloadStatus\",\"parameters\":[{\"description\":\"The unique ID of the request. Obtained from the [export request](https://help.branch.io/developers-hub/reference/cross-events-export-api#request-data-export).\",\"explode\":\"false\",\"in\":\"path\",\"name\":\"job_id\",\"required\":\"true\",\"schema\":{\"type\":\"string\"},\"style\":\"simple\"},{\"description\":\"The unique identifier for the app. Alternatively, provide `organization_id`.\",\"in\":\"query\",\"name\":\"app_id\",\"required\":\"true\",\"schema\":{\"type\":\"string\"},\"style\":\"form\"}],\"protocol\":\"http\",\"responses\":{\"200\":{\"content\":{\"application/json\":{\"examples\":{\"Result\":{\"value\":\"{\\n  \\\"code\\\": 200\\n  \\\"status\\\": \\\"FINISHED\\\"\\n  \\\"response_url\\\": \\\"https://branch-exports-usw2.s3.amazonaws.com/partner-query/2023-05-12-2023-05-19-eo_install-day-unique-id-here.csv?Signature={SIGNATURE_HERE}%3D&AWSAccessKeyId={AWS_ACCESS_KEY_ID_HERE}&Expires={EXPIRATION_HERE}\\\"\\n}\"}},\"schema\":{\"properties\":{\"code\":{\"description\":\"Response code\",\"example\":\"200\",\"type\":\"integer\"},\"job_id\":{\"description\":\"The unique ID of the request.\",\"example\":\"XXXX-0000-xxxx\",\"type\":\"string\"},\"status_url\":{\"description\":\"The URL of the export request.\",\"example\":\"https://api2.branch.io/v1/branch_aggregate/async/status/{JOB_ID_HERE}\",\"type\":\"string\"}},\"type\":\"object\"}}},\"description\":\"Job Successfully Finished\"},\"400\":{\"content\":{\"application/json\":{\"examples\":{\"Result\":{\"value\":\"{\\n    \\\"error\\\": {\\n        \\\"message\\\": \\\"Authentication failed !\\\",\\n        \\\"code\\\": 400\\n    }\\n}\"}},\"schema\":{\"properties\":{\"error\":{\"properties\":{\"code\":{\"example\":\"400\",\"type\":\"integer\"},\"message\":{\"example\":\"Authentication failed !\",\"type\":\"string\"}},\"type\":\"object\"}},\"type\":\"object\"}}},\"description\":\"Authentication Failed\"},\"404\":{\"description\":\"Job ID Not Found\"},\"429\":{\"content\":{\"application/json\":{\"examples\":{\"Result\":{\"value\":\"{\\n    \\\"error\\\": {\\n        \\\"code\\\": 429,\\n        \\\"message\\\": \\\"Rate limit reached.\\\"\\n    }\\n}\"}},\"schema\":{\"properties\":{\"error\":{\"properties\":{\"code\":{\"example\":\"429\",\"type\":\"integer\"},\"message\":{\"example\":\"Rate limit reached.\",\"type\":\"string\"}},\"type\":\"object\"}},\"type\":\"object\"}}},\"description\":\"Rate Limit Reached\"}},\"securitySource\":\"unspecified\"}"
+            source: "openapi3"
+            version: 1
+          }
+          method: "GET"
+          orig: "/branch_aggregate/async/status/{job_id}"
+          rename: {
+            param: {
+              job_id: "id"
+            }
+          }
+          segments: [
+            {
+              lit: "branch_aggregate"
+            }
+            {
+              lit: "async"
+            }
+            {
+              lit: "status"
+            }
+            {
+              var: "id"
+            }
+          ]
+          select: {
+            exist: [
+              "app_id"
+              "id"
+            ]
+          }
+          transform: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}
